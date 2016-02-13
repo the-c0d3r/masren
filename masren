@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+import os
+import re
+
+
+"""
+A Mass file renamer
+-------------------
+1. to mass rename the file extension to something else.
+2. might include the regex support
+"""
+
+def getfiles():
+    return [i for i in os.listdir('.')]
+
+def stripfilename(fname):
+    """ 
+    Returns the file name excluding file extension 
+    Can Also handle filename with multiple dots/full stops in it
+    """
+    return fname[:fname.rfind(".")]
+
+def renamePattern(pattern,newExtension):
+    print("Pattern : ",pattern)
+
+def renameExtension(oldExtension,newExtension):
+    if '.' not in oldExtension: oldExtension = '.'+oldExtension
+    if '.' not in newExtension: newExtension = '.'+newExtension
+    print("[+] Old Extension : ",oldExtension)
+    files = getfiles()
+    modify = [i for i in files if oldExtension in i]
+    # keeps track of files needed to rename
+    print("[+] %d files matched" % len(modify))
+
+    for i in modify:
+        rename(i,str(stripfilename(i)+newExtension))
+    print("[+] New Extension : ",newExtension)
+
+def rename(oldfile,newfile):
+    try:
+        os.rename(oldfile,newfile)
+    except Exception as e:
+        print(e)
+
+
+
+if __name__ == "__main__":
+    import sys
+    usage = "Usage\n-----\n"
+    usage += "masren old-extension new-extension\n"
+    usage += "masren -p pattern new-extension"
+
+    if len(sys.argv) <= 1:
+        print(usage)
+    else:
+        if len(sys.argv) == 4:
+            # masren -p pattern newExtension
+            #    0    1     2       3
+            renamePattern(sys.argv[2],sys.argv[3])
+        elif len(sys.argv) == 3:
+            # masren old-extension new-extension
+            #    0           1            2 
+            renameExtension(sys.argv[1],sys.argv[2])
+        else:
+            print(usage)
