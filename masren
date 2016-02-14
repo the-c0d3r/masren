@@ -21,20 +21,46 @@ def stripfilename(fname):
     return fname[:fname.rfind(".")]
 
 def renamePattern(pattern,newExtension):
-    print("Pattern : ",pattern)
+    newExtension = prepExt(newExtension)
+    print("[+] Pattern : [%s]" % pattern)
+    files = getfiles()
+    matched = []
+
+    for file in files:
+        if re.match(pattern,file):
+            matched.append(file)
+    if len(matched) > 0:
+        print("[+] %d files Matched" % len(matched))
+        for file in matched:
+            rename(file,str(stripfilename(file)+str(''.join(newExtension))))
+    else:
+        print("[-] No files Matched with pattern %s" % pattern)
+
+def prepExt(*args):
+    '''
+    Validates and add '.' in front of command arg
+    '''
+    arg = list(args)
+    for pos in range(len(arg)):
+        if '.' not in arg[pos]:
+            arg[pos] = '.' + str(arg[pos])
+    return arg
 
 def renameExtension(oldExtension,newExtension):
-    if '.' not in oldExtension: oldExtension = '.'+oldExtension
-    if '.' not in newExtension: newExtension = '.'+newExtension
-    print("[+] Old Extension : ",oldExtension)
+    oldExtension, newExtension = prepExt(oldExtension,newExtension)
+    # print("[+] Old Extension : ",oldExtension)
+    print("[+] %s -> %s" % (oldExtension,newExtension))
     files = getfiles()
-    modify = [i for i in files if oldExtension in i]
+    matched = [i for i in files if i.rfind(oldExtension) != -1]
     # keeps track of files needed to rename
-    print("[+] %d files matched" % len(modify))
 
-    for i in modify:
-        rename(i,str(stripfilename(i)+newExtension))
-    print("[+] New Extension : ",newExtension)
+    if len(matched) > 0:
+        print("[+] %d files matched" % len(matched))
+        for file in matched:
+            rename(file,str(stripfilename(file)+newExtension))
+        print("[+] New Extension : ",newExtension)
+    else:
+        print("[-] No files matched")
 
 def rename(oldfile,newfile):
     try:
@@ -57,6 +83,7 @@ if __name__ == "__main__":
             # masren -p pattern newExtension
             #    0    1     2       3
             renamePattern(sys.argv[2],sys.argv[3])
+
         elif len(sys.argv) == 3:
             # masren old-extension new-extension
             #    0           1            2 
