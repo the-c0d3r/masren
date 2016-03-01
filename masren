@@ -26,13 +26,13 @@ def renamePattern(pattern,newExtension):
     files = getfiles()
     matched = []
 
-    for file in files:
-        if re.match(pattern,file):
-            matched.append(file)
+    for fname in files:
+        if re.match(pattern,fname):
+            matched.append(fname)
     if len(matched) > 0:
         print("[+] %d files Matched" % len(matched))
-        for file in matched:
-            rename(file,str(stripfilename(file)+str(''.join(newExtension))))
+        for fname in matched:
+            rename(fname,str(stripfilename(fname)+str(''.join(newExtension))))
     else:
         print("[-] No files Matched with pattern %s" % pattern)
 
@@ -56,8 +56,8 @@ def renameExtension(oldExtension,newExtension):
 
     if len(matched) > 0:
         print("[+] %d files matched" % len(matched))
-        for file in matched:
-            rename(file,str(stripfilename(file)+newExtension))
+        for fname in matched:
+            rename(fname,str(stripfilename(fname)+newExtension))
         print("[+] New Extension : ",newExtension)
     else:
         print("[-] No files matched")
