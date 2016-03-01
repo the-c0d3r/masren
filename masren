@@ -18,7 +18,7 @@ def stripfilename(fname):
     Returns the file name excluding file extension 
     Can Also handle filename with multiple dots/full stops in it
     """
-    return fname[:fname.rfind(".")]
+    return os.path.splitext(fname)[0]
 
 def renamePattern(pattern,newExtension):
     newExtension = prepExt(newExtension)
