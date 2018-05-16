@@ -7,20 +7,35 @@ import re
 A Mass file renamer
 -------------------
 1. to mass rename the file extension to something else.
-2. might include the regex support
-3. Change to OOP Structure
-4. Make use of argparse module
+2. Added include the regex support
+3. Create a log which will log the last 3 operations
+   So if the user wishes, they can undo/roll-back changes they made
+
+   Problems
+   - Where to keep the log file?
+   - The data format to write in log file
+   - How to check if it is 3rd log, which means, the last entry needs to be eliminated
+
 """
+
+logging = True
+# Set it to false, to disable rollback and undo function which is dependent on the logging.
+logfile = ".masren.log"
+log
 
 def getfiles():
     return [i for i in os.listdir('.')]
 
+def writeLog():
+    logfile = open(logfile,"a+")
+
+
 def stripfilename(fname):
-    """
-    Returns the file name excluding file extension
+    """ 
+    Returns the file name excluding file extension 
     Can Also handle filename with multiple dots/full stops in it
     """
-    return os.path.splitext(fname)[0]
+    return fname[:fname.rfind(".")]
 
 def renamePattern(pattern,newExtension):
     newExtension = prepExt(newExtension)
@@ -28,17 +43,13 @@ def renamePattern(pattern,newExtension):
     files = getfiles()
     matched = []
 
-    for fname in files:
-        if re.match(pattern,fname):
-            matched.append(fname)
+    for file in files:
+        if re.match(pattern,file):
+            matched.append(file)
     if len(matched) > 0:
         print("[+] %d files Matched" % len(matched))
-        for fname in matched:
-            oldName = fname
-            newName = str(stripfilename(fname)) + str(''.join(newExtension))
-            print("[+] {} => {}".format(oldName, newName))
-            #  rename(fname,str(stripfilename(fname)+str(''.join(newExtension))))
-            rename(oldName, newName)
+        for file in matched:
+            rename(file,str(stripfilename(file)+str(''.join(newExtension))))
     else:
         print("[-] No files Matched with pattern %s" % pattern)
 
@@ -59,15 +70,12 @@ def renameExtension(oldExtension,newExtension):
     files = getfiles()
     matched = [i for i in files if i.rfind(oldExtension) != -1]
     # keeps track of files needed to rename
-    print("[+] New Extension : ",newExtension)
 
     if len(matched) > 0:
         print("[+] %d files matched" % len(matched))
-        for fname in matched:
-            oldName = fname
-            newName = str(stripfilename(fname) + newExtension)
-            print("[+] {} => {}".format(oldName, newName))
-            rename(oldName, newName)
+        for file in matched:
+            rename(file,str(stripfilename(file)+newExtension))
+        print("[+] New Extension : ",newExtension)
     else:
         print("[-] No files matched")
 
@@ -81,10 +89,16 @@ def rename(oldfile,newfile):
 
 if __name__ == "__main__":
     import sys
-    usage = "Usage\n-----\n"
+    usage = "Mass Renamer (File Extension)\n"
+    usage += "\nFeatures\n--------\n"
+    usage += "1. Rename file extension provided old and new extension\n"
+    usage += "2. Rename file extension with regular expression pattern\n"
+    usage += "\nUsage\n-----\n"
     usage += "masren old-extension new-extension\n"
     usage += "masren -p pattern new-extension\n"
-    usage += "\nWritten by : the-c0d3r\n"
+    usage += "\nNote: \nRight now it is only extension renamer.\n"
+    usage += "I plan to make it support file renaming instead\n"
+    usage += "of just extension."
 
     if len(sys.argv) <= 1:
         print(usage)
@@ -96,7 +110,7 @@ if __name__ == "__main__":
 
         elif len(sys.argv) == 3:
             # masren old-extension new-extension
-            #    0           1            2
+            #    0           1            2 
             renameExtension(sys.argv[1],sys.argv[2])
         else:
             print(usage)
