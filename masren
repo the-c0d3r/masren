@@ -83,7 +83,8 @@ if __name__ == "__main__":
     import sys
     usage = "Usage\n-----\n"
     usage += "masren old-extension new-extension\n"
-    usage += "masren -p pattern new-extension"
+    usage += "masren -p pattern new-extension\n"
+    usage += "\nWritten by : the-c0d3r\n"
 
     if len(sys.argv) <= 1:
         print(usage)
